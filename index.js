@@ -2,9 +2,13 @@ const fs = require("fs");
 const csv = require("csv-parser");
 require("dotenv").config();
 
-const inputFilePath = `../master/${process.env.FILE_NAME}.csv`;
-const regexPattern = /\.\.\/master\/([a-zA-Z_]+)_\d{12}\.csv/;
-const outputFilePath = inputFilePath.replace(regexPattern, "../output/$1.csv");
+const REGEX = /([a-zA-Z_]+)_\d{12}\.csv$/;
+
+const rawFileName = `${process.env.FILE_NAME}.csv`;
+const fileName = rawFileName.replace(REGEX, "$1.csv");
+
+const inputFilePath = `./master/${rawFileName}`;
+const outputFilePath = `./output/${fileName}`;
 
 /**
  * This variable defines the character used to quote fields in the input CSV file.
