@@ -1,19 +1,30 @@
 const fs = require("fs");
 const csv = require("csv-parser");
 
-// Input and output file paths
-const inputFilePath = "../master/medical_supply_202401231755.csv";
+const inputFilePath = "../master/medication_202401231755.csv";
 const regexPattern = /\.\.\/master\/([a-zA-Z_]+)_\d{12}\.csv/;
 const outputFilePath = inputFilePath.replace(regexPattern, "../output/$1.csv");
 
-const delimiter = ",";
+// config input here:
+const interQuote = '"';
+const inputSeparator = ",";
+
+// config output here:
+const outputDelimiter = ";";
+const outputQuoteChar = "—";
 
 const rows = [];
 
-const targets = ["is_active", "active", "alert"];
+const targets = [
+  "is_active",
+  "active",
+  "alert",
+  "active_search",
+  "enable_privilege",
+];
 
 fs.createReadStream(inputFilePath)
-  .pipe(csv({ quote: '"', separator: "," }))
+  .pipe(csv({ quote: interQuote, separator: inputSeparator }))
   .on("data", (row) => {
     targets.forEach((s) => {
       if (row[s] !== undefined) {
@@ -33,13 +44,21 @@ fs.createReadStream(inputFilePath)
 
     // Write the header to the new CSV file
     const header = Object.keys(rows[0]);
-    writeStream.write(header.join(delimiter) + "\n");
+    writeStream.write(
+      header
+        .map((s) => `${outputQuoteChar}${s}${outputQuoteChar}`)
+        .join(outputDelimiter) + "\n"
+    );
 
     // Write the rows to the new CSV file
     rows.forEach((row) => {
       const values = header.map((column) => row[column]);
 
-      writeStream.write(values.map((s) => `"${s}"`).join(delimiter) + "\n");
+      writeStream.write(
+        values
+          .map((s) => `${outputQuoteChar}${s}${outputQuoteChar}`)
+          .join(outputDelimiter) + "\n"
+      );
     });
 
     console.log("CSV file processing completed.");
