@@ -6,32 +6,37 @@ const inputFilePath = `../master/${process.env.FILE_NAME}.csv`;
 const regexPattern = /\.\.\/master\/([a-zA-Z_]+)_\d{12}\.csv/;
 const outputFilePath = inputFilePath.replace(regexPattern, "../output/$1.csv");
 
-/* 
-  @Description 
-    config input
-  @Example
-    const inputQuote = '"';
-    const inputDelimiter = ",";
-*/
+/**
+ * This variable defines the character used to quote fields in the input CSV file.
+ * @detail If inputQuote is set to `"`, it means that fields are enclosed in double quotes.
+ * @example const inputQuote = '"';
+ */
 const inputQuote = '"';
+/**
+ * This variable specifies the delimiter used to separate fields in the input CSV file.
+ * @detail If inputDelimiter is set to `,`, it means that fields are separated by commas.
+ * @example const inputDelimiter = ",";
+ */
 const inputDelimiter = ",";
 
-/* 
-  @Description 
-    config output
-  @Example
-    const outputDelimiter = ':';
-    const outputQuoteChar = ",";
-*/
-const outputDelimiter = ";";
+/**
+ * This variable defines the character used to quote fields in the output CSV file.
+ * @detail If outputQuoteChar is set to `"`, it means that fields will be enclosed in double quotes in the output.
+ * @example const outputQuoteChar = '"';
+ */
 const outputQuoteChar = "—";
+/**
+ * This variable specifies the delimiter to be used in the output CSV file when separating fields.
+ * @detail If outputDelimiter is set to `,`, it means that fields will be separated by commas in the output.
+ * @example const outputDelimiter = ",";
+ */
+const outputDelimiter = ";";
 
-/* 
-  @Description 
-    config boolean column
-  @Example 
-    const booleanColumns [ "active", "status"];
-*/
+/**
+ * This array contains a list of column names that are expected to represent boolean values in the input CSV file.
+ * @detail  For each column specified in this array, if the corresponding value in a row is "1", it will be converted to the string "true"; otherwise, it will be converted to "false".
+ * @example const booleanColumns = ["active","status"];
+ */
 const booleanColumns = [
   "is_active",
   "active",
