@@ -1,7 +1,8 @@
 const fs = require("fs");
 const csv = require("csv-parser");
+require("dotenv").config();
 
-const inputFilePath = "../master/medication_202401231755.csv";
+const inputFilePath = `../master/${process.env.FILE_NAME}.csv`;
 const regexPattern = /\.\.\/master\/([a-zA-Z_]+)_\d{12}\.csv/;
 const outputFilePath = inputFilePath.replace(regexPattern, "../output/$1.csv");
 
