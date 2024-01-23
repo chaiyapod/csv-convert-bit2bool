@@ -2,17 +2,28 @@ const fs = require("fs");
 const csv = require("csv-parser");
 
 // Input and output file paths
-const inputFilePath = "../dispense_unit_202401231632.csv";
-const outputFilePath = "../temp/dispense_unit.csv";
+const inputFilePath = "../master/medical_supply_202401231755.csv";
+const regexPattern = /\.\.\/master\/([a-zA-Z_]+)_\d{12}\.csv/;
+const outputFilePath = inputFilePath.replace(regexPattern, "../output/$1.csv");
+
+const delimiter = ",";
 
 const rows = [];
 
-const target = "active";
+const targets = ["is_active", "active", "alert"];
 
 fs.createReadStream(inputFilePath)
-  .pipe(csv({ delimiter: "," }))
+  .pipe(csv({ quote: '"', separator: "," }))
   .on("data", (row) => {
-    row[target] = row[target] == "1" ? "true" : "false";
+    targets.forEach((s) => {
+      if (row[s] !== undefined) {
+        row[s] = row[s] == "1" ? "true" : "false";
+      }
+    });
+
+    Object.keys(row).forEach((s) => {
+      row[s] = row[s].replace(/\n/g, " ");
+    });
 
     rows.push(row);
   })
@@ -22,12 +33,13 @@ fs.createReadStream(inputFilePath)
 
     // Write the header to the new CSV file
     const header = Object.keys(rows[0]);
-    writeStream.write(header.join("|") + "\n");
+    writeStream.write(header.join(delimiter) + "\n");
 
     // Write the rows to the new CSV file
     rows.forEach((row) => {
       const values = header.map((column) => row[column]);
-      writeStream.write(values.join("|") + "\n");
+
+      writeStream.write(values.map((s) => `"${s}"`).join(delimiter) + "\n");
     });
 
     console.log("CSV file processing completed.");
