@@ -57,45 +57,40 @@ const booleanColumns = [
   "require_payer_condition",
 ];
 
-const rows = [];
+const csvRowsData = [];
 
 fs.createReadStream(inputFilePath)
   .pipe(csv({ quote: inputQuote, separator: inputDelimiter }))
   .on("data", (row) => {
-    booleanColumns.forEach((s) => {
-      if (row[s] !== undefined) {
-        row[s] = row[s] == "1" ? "true" : "false";
+    booleanColumns.forEach((column) => {
+      if (row[column] !== undefined) {
+        row[column] = row[column] == "1" ? "true" : "false";
       }
     });
 
-    Object.keys(row).forEach((s) => {
-      row[s] = row[s].replace(/\n/g, " ");
+    // TODO:
+    Object.keys(row).forEach((key) => {
+      row[key] = row[key].replace(/\n/g, " ");
     });
 
-    rows.push(row);
+    csvRowsData.push(row);
   })
   .on("end", () => {
     // Write the data to a new CSV file
     const writeStream = fs.createWriteStream(outputFilePath);
 
     // Write the header to the new CSV file
-    const header = Object.keys(rows[0]);
-    writeStream.write(
-      header
-        .map((s) => `${outputQuoteChar}${s}${outputQuoteChar}`)
-        .join(outputDelimiter) + "\n"
-    );
+    const header = Object.keys(csvRowsData[0]);
+    writeStream.write(header.map(mapQuoteChar).join(outputDelimiter) + "\n");
 
     // Write the rows to the new CSV file
-    rows.forEach((row) => {
+    csvRowsData.forEach((row) => {
       const values = header.map((column) => row[column]);
 
-      writeStream.write(
-        values
-          .map((s) => `${outputQuoteChar}${s}${outputQuoteChar}`)
-          .join(outputDelimiter) + "\n"
-      );
+      writeStream.write(values.map(mapQuoteChar).join(outputDelimiter) + "\n");
     });
 
     console.log("CSV file processing completed.");
   });
+
+const mapQuoteChar = (text) => `${outputQuoteChar}${text}${outputQuoteChar}`;
