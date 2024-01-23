@@ -6,28 +6,54 @@ const inputFilePath = `../master/${process.env.FILE_NAME}.csv`;
 const regexPattern = /\.\.\/master\/([a-zA-Z_]+)_\d{12}\.csv/;
 const outputFilePath = inputFilePath.replace(regexPattern, "../output/$1.csv");
 
-// config input here:
-const interQuote = '"';
-const inputSeparator = ",";
+/* 
+  @Description 
+    config input
+  @Example
+    const inputQuote = '"';
+    const inputDelimiter = ",";
+*/
+const inputQuote = '"';
+const inputDelimiter = ",";
 
-// config output here:
+/* 
+  @Description 
+    config output
+  @Example
+    const outputDelimiter = ':';
+    const outputQuoteChar = ",";
+*/
 const outputDelimiter = ";";
 const outputQuoteChar = "—";
 
-const rows = [];
-
-const targets = [
+/* 
+  @Description 
+    config boolean column
+  @Example 
+    const booleanColumns [ "active", "status"];
+*/
+const booleanColumns = [
   "is_active",
   "active",
   "alert",
   "active_search",
   "enable_privilege",
+  "breastfeeding_risk",
+  "pregnancy_risk",
+  "fractional",
+  "dispense_round_up",
+  "compound",
+  "reimburse_active",
+  "require_ned_reason",
+  "require_payer_condition",
 ];
 
+const rows = [];
+
 fs.createReadStream(inputFilePath)
-  .pipe(csv({ quote: interQuote, separator: inputSeparator }))
+  .pipe(csv({ quote: inputQuote, separator: inputDelimiter }))
   .on("data", (row) => {
-    targets.forEach((s) => {
+    booleanColumns.forEach((s) => {
       if (row[s] !== undefined) {
         row[s] = row[s] == "1" ? "true" : "false";
       }
