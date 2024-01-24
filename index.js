@@ -57,6 +57,13 @@ const booleanColumns = [
   "require_payer_condition",
 ];
 
+/**
+ * This variable defines the boolean used to replaces any newline character (\n) in the corresponding value with a space.
+ * @detail  If the row object has a property with a value containing newline characters, such as `"123 Main St\nApt 4"`, After process the row object would me modified to `"123 Main St Apt 4"`.
+ * @example const sanitizeRowValues = true;
+ */
+const sanitizeRowValues = false;
+
 const csvRowsData = [];
 
 fs.createReadStream(inputFilePath)
@@ -68,10 +75,11 @@ fs.createReadStream(inputFilePath)
       }
     });
 
-    // TODO:
-    Object.keys(row).forEach((key) => {
-      row[key] = row[key].replace(/\n/g, " ");
-    });
+    if (sanitizeRowValues) {
+      Object.keys(row).forEach((key) => {
+        row[key] = row[key].replace(/\n/g, " ");
+      });
+    }
 
     csvRowsData.push(row);
   })
