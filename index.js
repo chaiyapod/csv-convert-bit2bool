@@ -55,6 +55,7 @@ const booleanColumns = [
   "reimburse_active",
   "require_ned_reason",
   "require_payer_condition",
+  "require_dosage",
 ];
 
 /**
